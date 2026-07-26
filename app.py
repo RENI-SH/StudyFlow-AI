@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 import PyPDF2
 import re
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.')
 app.secret_key = 'studyflow_secret_key_123'
 
 summary_data = {
