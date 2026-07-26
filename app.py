@@ -196,6 +196,7 @@ def results():
 def get_summary_data():
     html = summary_data.get('html_content', '<p>No content generated</p>')
     return jsonify({'html': html})
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
