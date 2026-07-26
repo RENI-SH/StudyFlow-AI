@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - StudyFlow AI</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; margin: 0; }
+        .header { text-align: center; padding: 60px 20px 20px; }
+        .header h1 { font-size: 3em; margin: 0; }
+        .header p { font-size: 1.3em; opacity: 0.9; margin-top: 10px; }
+        .cards-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 280px;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            text-align: center;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.4);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .card-icon { font-size: 4em; margin-bottom: 20px; }
+        .card h2 { font-size: 1.8em; margin-bottom: 15px; }
+        .card p { font-size: 1.1em; opacity: 0.9; line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Welcome, {{ username }}!</h1>
+        <p>Choose a feature to get started</p>
+    </div>
+    <div class="cards-container">
+        <a href="/notefusion" class="card">
+            <div class="card-icon">🧠</div>
+            <h2>NoteFusion AI</h2>
+            <p>Upload your notes, PDFs, PPTs and get AI-powered summaries with definitions, formulas, and theory.</p>
+        </a>
+        <a href="/focus" class="card">
+            <div class="card-icon">🎯</div>
+            <h2>Focus Zone</h2>
+            <p>Stay productive with Pomodoro timer, to-do lists, and motivational messages.</p>
+        </a>
+        <a href="/timetable" class="card">
+            <div class="card-icon">📅</div>
+            <h2>Timetable Generator</h2>
+            <p>Create a personalized study schedule based on your subjects and available time.</p>
+        </a>
+    </div>
+</body>
+</html>

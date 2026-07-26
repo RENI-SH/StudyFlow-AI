@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Timetable Generator - StudyFlow AI</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; }
+        h1 { text-align: center; font-size: 2.5em; margin-bottom: 10px; }
+        .subtitle { text-align: center; font-size: 1.2em; opacity: 0.9; margin-bottom: 30px; }
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 1.1em; }
+        input[type="text"], input[type="date"], input[type="time"], input[type="number"], select { width: 100%; padding: 12px; margin-top: 5px; border: none; border-radius: 8px; font-size: 1em; background: rgba(255,255,255,0.9); color: #333; box-sizing: border-box; }
+        .date-row { display: flex; gap: 15px; }
+        .date-row > div { flex: 1; }
+        .subject-row { display: flex; gap: 10px; margin: 10px 0; align-items: center; }
+        .subject-row input { flex: 1; }
+        .subject-row select { width: 150px; }
+        .subject-row button { background: #ff4757; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; }
+        .add-btn { background: #2ed573; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 1em; margin-top: 15px; }
+        .generate-btn { width: 100%; padding: 15px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 1.2em; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .generate-btn:hover { background: #764ba2; }
+        .timetable-result { margin-top: 30px; background: white; color: #333; padding: 25px; border-radius: 15px; display: none; max-height: 70vh; overflow-y: auto; }
+        .timetable-result h3 { color: #667eea; margin-top: 0; }
+        .day-schedule { background: #f9f9f9; padding: 15px; margin: 15px 0; border-radius: 10px; border-left: 4px solid #667eea; }
+        .day-schedule h4 { color: #764ba2; margin: 0 0 10px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 0.95em; }
+        th { background: #667eea; color: white; }
+        tr:nth-child(even) { background: #fff; }
+        tr:nth-child(odd) { background: #f0f4ff; }
+    </style>
+</head>
+<body>
+<div style="position: fixed; left: 0; top: 0; width: 220px; height: 100%; background: rgba(0,0,0,0.8); color: white; padding: 20px; box-sizing: border-box; z-index: 1000;">
+    <h3 style="color: #fff; border-bottom: 1px solid #555; padding-bottom: 10px;">StudyFlow AI</h3>
+    <p style="font-size: 0.9em; opacity: 0.7;">Hello, {{ username }}</p>
+    <ul style="list-style: none; padding: 0; margin-top: 30px;">
+        <li style="margin: 15px 0;"><a href="/dashboard" style="color: white; text-decoration: none; font-size: 1.1em;"> Dashboard</a></li>
+        <li style="margin: 15px 0;"><a href="/notefusion" style="color: white; text-decoration: none; font-size: 1.1em;">🧠 NoteFusion</a></li>
+        <li style="margin: 15px 0;"><a href="/focus" style="color: white; text-decoration: none; font-size: 1.1em;">🎯 Focus Zone</a></li>
+        <li style="margin: 15px 0;"><a href="/timetable" style="color: white; text-decoration: none; font-size: 1.1em;">📅 Timetable Generator</a></li>
+        <li style="margin: 40px 0 0 0;"><a href="/logout" style="color: #ff4757; text-decoration: none; font-size: 1em;">🚪 Logout</a></li>
+    </ul>
+</div>
+<div style="margin-left: 240px; padding: 20px;">
+    <div class="container">
+        <h1> Timetable Generator</h1>
+        <p class="subtitle">Create your personalized study schedule until exam</p>
+        
+        <label>Dates:</label>
+        <div class="date-row">
+            <div>
+                <label style="font-size: 0.9em; opacity: 0.9;">Today's Date:</label>
+                <input type="date" id="currentDate" required>
+            </div>
+            <div>
+                <label style="font-size: 0.9em; opacity: 0.9;">Exam Start Date:</label>
+                <input type="date" id="examDate" required>
+            </div>
+        </div>
+        
+        <label>Available Study Hours (Daily):</label>
+        <div class="date-row">
+            <div>
+                <label style="font-size: 0.9em; opacity: 0.9;">From:</label>
+                <input type="time" id="startTime" value="09:00" required>
+            </div>
+            <div>
+                <label style="font-size: 0.9em; opacity: 0.9;">To:</label>
+                <input type="time" id="endTime" value="17:00" required>
+            </div>
+        </div>
+        
+        <label>Add your subjects:</label>
+        <div id="subjectsList">
+            <div class="subject-row">
+                <input type="text" placeholder="Subject name" class="subject-name">
+                <select class="priority">
+                    <option value="High">High Priority</option>
+                    <option value="Medium">Medium Priority</option>
+                    <option value="Low">Low Priority</option>
+                </select>
+                <button onclick="removeSubject(this)"></button>
+            </div>
+        </div>
+        
+        <button class="add-btn" onclick="addSubject()">+ Add Another Subject</button>
+        
+        <button class="generate-btn" onclick="generateTimetable()">✨ Generate Timetable</button>
+        
+        <div class="timetable-result" id="timetableResult">
+            <h3>Your Personalized Study Timetable</h3>
+            <div id="timetableContent"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set today's date automatically
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('currentDate').value = today;
+    document.getElementById('currentDate').min = today;
+    document.getElementById('examDate').min = today;
+
+    function addSubject() {
+        const list = document.getElementById('subjectsList');
+        const row = document.createElement('div');
+        row.className = 'subject-row';
+        row.innerHTML = `
+            <input type="text" placeholder="Subject name" class="subject-name">
+            <select class="priority">
+                <option value="High">High Priority</option>
+                <option value="Medium">Medium Priority</option>
+                <option value="Low">Low Priority</option>
+            </select>
+            <button onclick="removeSubject(this)">✕</button>
+        `;
+        list.appendChild(row);
+    }
+
+    function removeSubject(btn) {
+        btn.parentElement.remove();
+    }
+
+    function generateTimetable() {
+        const currentDate = new Date(document.getElementById('currentDate').value);
+        const examDate = new Date(document.getElementById('examDate').value);
+        const startTime = document.getElementById('startTime').value;
+        const endTime = document.getElementById('endTime').value;
+        
+        const subjects = [];
+        document.querySelectorAll('.subject-row').forEach(row => {
+            const name = row.querySelector('.subject-name').value;
+            const priority = row.querySelector('.priority').value;
+            if (name) subjects.push({ name, priority });
+        });
+
+        if (subjects.length === 0) {
+            alert('Please add at least one subject!');
+            return;
+        }
+
+        if (examDate <= currentDate) {
+            alert('Exam date must be after today!');
+            return;
+        }
+
+        // Generate time slots
+        const timeSlots = generateTimeSlots(startTime, endTime);
+        
+        // Sort subjects by priority
+        subjects.sort((a, b) => {
+            const priority = { 'High': 0, 'Medium': 1, 'Low': 2 };
+            return priority[a.priority] - priority[b.priority];
+        });
+
+        let html = '';
+        let current = new Date(currentDate);
+        let dayCount = 1;
+
+        while (current <= examDate) {
+            const dayName = current.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const dateString = current.toISOString().split('T')[0];
+            
+            html += `<div class="day-schedule">`;
+            html += `<h4>📅 Day ${dayCount} - ${dayName}</h4>`;
+            html += `<table><tr><th>Time</th><th>Subject</th><th>Priority</th></tr>`;
+            
+            // Shuffle subjects for variety but keep priority in mind
+            let shuffled = [...subjects].sort(() => Math.random() - 0.5);
+            shuffled.sort((a, b) => {
+                const priority = { 'High': 0, 'Medium': 1, 'Low': 2 };
+                return priority[a.priority] - priority[b.priority];
+            });
+            
+            timeSlots.forEach((slot, idx) => {
+                const subject = shuffled[idx % shuffled.length];
+                html += `<tr><td>${slot}</td><td>${subject.name}</td><td>${subject.priority}</td></tr>`;
+            });
+            
+            html += `</table></div>`;
+            
+            current.setDate(current.getDate() + 1);
+            dayCount++;
+        }
+
+        document.getElementById('timetableContent').innerHTML = html;
+        document.getElementById('timetableResult').style.display = 'block';
+        document.getElementById('timetableResult').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function generateTimeSlots(start, end) {
+        const slots = [];
+        const [startHour, startMin] = start.split(':').map(Number);
+        const [endHour, endMin] = end.split(':').map(Number);
+        
+        let currentHour = startHour;
+        let currentMin = startMin;
+        
+        while (currentHour < endHour || (currentHour === endHour && currentMin < endMin)) {
+            const nextHour = currentHour + 1;
+            const slotStart = `${String(currentHour).padStart(2, '0')}:${String(currentMin).padStart(2, '0')}`;
+            const slotEnd = `${String(nextHour).padStart(2, '0')}:${String(currentMin).padStart(2, '0')}`;
+            slots.push(`${slotStart} - ${slotEnd}`);
+            currentHour++;
+        }
+        
+        return slots;
+    }
+</script>
+</body>
+</html>

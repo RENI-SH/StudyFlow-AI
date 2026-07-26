@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NoteFusion AI - StudyFlow</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 40px 20px; min-height: 100vh; margin:0; }
+        h1 { font-size: 3em; margin-bottom: 10px; }
+        .container { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; max-width: 800px; margin: 0 auto; text-align: left; }
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 1.1em; }
+        input[type="text"] { width: 100%; padding: 12px; margin-top: 5px; border: none; border-radius: 8px; font-size: 1em; background: rgba(255,255,255,0.9); color: #333; box-sizing: border-box; }
+        .file-upload-box { border: 3px dashed rgba(255,255,255,0.6); border-radius: 15px; padding: 40px 20px; text-align: center; margin-top: 10px; background: rgba(255,255,255,0.1); }
+        .file-upload-box input[type="file"] { display: none; }
+        .upload-btn { cursor: pointer; background: #667eea; color: white; padding: 15px 30px; border-radius: 8px; display: inline-block; font-size: 1.1em; font-weight: bold; transition: 0.3s; }
+        .upload-btn:hover { background: #764ba2; transform: scale(1.05); }
+        .file-list { margin-top: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; min-height: 50px; }
+        .file-item { background: rgba(255,255,255,0.2); padding: 10px 15px; margin: 8px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2ed573; }
+        .file-item button { background: #ff4757; color: white; border: none; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        button[type="submit"] { margin-top: 25px; width: 100%; padding: 15px; background: #2ed573; color: white; border: none; border-radius: 10px; font-size: 1.2em; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button[type="submit"]:hover { background: #7bed9f; }
+        button[type="submit"]:disabled { background: #888; cursor: not-allowed; }
+        .loader { display: none; text-align: center; margin-top: 20px; font-size: 1.2em; }
+        .spinner { border: 4px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 4px solid #fff; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 10px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+<div style="position: fixed; left: 0; top: 0; width: 220px; height: 100%; background: rgba(0,0,0,0.8); color: white; padding: 20px; box-sizing: border-box; z-index: 1000;">
+    <h3 style="color: #fff; border-bottom: 1px solid #555; padding-bottom: 10px;">StudyFlow AI</h3>
+    <p style="font-size: 0.9em; opacity: 0.7;">Hello, {{ username }}</p>
+    <ul style="list-style: none; padding: 0; margin-top: 30px;">
+        <li style="margin: 15px 0;"><a href="/dashboard" style="color: white; text-decoration: none; font-size: 1.1em;">🏠 Dashboard</a></li>
+        <li style="margin: 15px 0;"><a href="/notefusion" style="color: white; text-decoration: none; font-size: 1.1em;"> NoteFusion</a></li>
+        <li style="margin: 15px 0;"><a href="/focus" style="color: white; text-decoration: none; font-size: 1.1em;">🎯 Focus Zone</a></li>
+        <li style="margin: 15px 0;"><a href="/timetable" style="color: white; text-decoration: none; font-size: 1.1em;">📅 Timetable Generator</a></li>
+        <li style="margin: 40px 0 0 0;"><a href="/logout" style="color: #ff4757; text-decoration: none; font-size: 1em;">🚪 Logout</a></li>
+    </ul>
+</div>
+<div style="margin-left: 240px; padding: 20px;">
+    <h1>🧠 NoteFusion AI</h1>
+    <p style="font-size: 1.2em; margin-bottom: 30px;">Upload ALL your notes, PDFs, PPTs - AI will merge them intelligently!</p>
+    
+    <div class="container">
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label>Subject Name:</label>
+            <input type="text" id="subject" placeholder="e.g., Chemistry" required>
+            
+            <label>Topic / Portion:</label>
+            <input type="text" id="topic" placeholder="e.g., Electrochemistry" required>
+            
+            <label>Select Your Files:</label>
+            <div class="file-upload-box">
+                <input type="file" id="fileInput" multiple accept=".pdf,.txt,.ppt,.pptx" onchange="updateFileList()">
+                <label for="fileInput" class="upload-btn">📁 Click Here to Select Files</label>
+                <p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">💡 TIP: Hold down the <b>CTRL</b> key on your keyboard while clicking files to select multiple at once!</p>
+            </div>
+            
+            <div class="file-list" id="fileList">
+                <p style="text-align: center; opacity: 0.7; margin: 0;">No files selected yet.</p>
+            </div>
+            
+            <button type="submit" id="submitBtn">✨ Generate Comprehensive Summary</button>
+        </form>
+
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>AI is analyzing all your notes... This may take 1-2 minutes!</p>
+        </div>
+    </div>
+
+    <script>
+        let uploadedFiles = [];
+
+        function updateFileList() {
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+            
+            const newFiles = Array.from(fileInput.files);
+            newFiles.forEach(file => {
+                if (!uploadedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    uploadedFiles.push(file);
+                }
+            });
+            
+            if (uploadedFiles.length === 0) {
+                fileList.innerHTML = '<p style="text-align: center; opacity: 0.7; margin: 0;">No files selected yet.</p>';
+            } else {
+                fileList.innerHTML = uploadedFiles.map((file, index) => `
+                    <div class="file-item">
+                        <span>📄 ${file.name} <small style="opacity:0.7">(${(file.size/1024).toFixed(1)} KB)</small></span>
+                        <button type="button" onclick="removeFile(${index})">✕ Remove</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            const dataTransfer = new DataTransfer();
+            uploadedFiles.forEach(file => dataTransfer.items.add(file));
+            document.getElementById('fileInput').files = dataTransfer.files;
+            updateFileList();
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            let subject = document.getElementById('subject').value;
+            let topic = document.getElementById('topic').value;
+            
+            if (uploadedFiles.length === 0) {
+                alert('Please upload at least one file!');
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append('subject', subject);
+            formData.append('topic', topic);
+            
+            uploadedFiles.forEach(file => {
+                formData.append('files', file);
+            });
+
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').innerText = 'Processing...';
+
+            try {
+                let response = await fetch('/api/summarize', {
+                    method: 'POST',
+                    body: formData
+                });
+                let data = await response.json();
+
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    alert('Error: ' + data.error);
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('submitBtn').disabled = false;
+                    document.getElementById('submitBtn').innerText = '✨ Generate Comprehensive Summary';
+                }
+            } catch (error) {
+                alert('Something went wrong.');
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('submitBtn').innerText = '✨ Generate Comprehensive Summary';
+            }
+        });
+    </script>
+</div>
+</body>
+</html>

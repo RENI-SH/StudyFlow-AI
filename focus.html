@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Focus Zone - StudyFlow AI</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 50px; min-height: 100vh; margin:0; overflow-x: hidden;}
+        h1 { font-size: 3em; margin-bottom: 10px; }
+        
+        /* Mode Selection Cards */
+        .mode-cards { display: flex; justify-content: center; gap: 30px; margin-top: 40px; flex-wrap: wrap; }
+        .mode-card { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 40px 30px; width: 250px; cursor: pointer; transition: 0.3s; }
+        .mode-card:hover { transform: translateY(-10px); background: rgba(255,255,255,0.25); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .mode-card h2 { margin: 15px 0 10px 0; font-size: 1.8em; }
+        .mode-card p { opacity: 0.9; }
+        .mode-icon { font-size: 4em; }
+
+        /* Custom Setup Form */
+        .setup-form { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; max-width: 400px; margin: 40px auto; display: none; }
+        .setup-form label { display: block; margin-top: 15px; font-weight: bold; font-size: 1.1em; text-align: left; }
+        .setup-form input { width: 100%; padding: 12px; margin-top: 5px; border: none; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
+        .setup-btn { margin-top: 25px; width: 100%; padding: 12px; background: #2ed573; color: white; border: none; border-radius: 8px; font-size: 1.2em; font-weight: bold; cursor: pointer; }
+
+        /* Active Timer */
+        .active-timer-section { display: none; margin-top: 30px; }
+        .phase-label { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
+        .timer { font-size: 6em; font-weight: bold; margin: 10px 0; font-family: 'Courier New', monospace; text-shadow: 2px 2px 10px rgba(0,0,0,0.3); }
+        .end-btn { padding: 12px 40px; font-size: 1.2em; margin-top: 20px; border: none; border-radius: 30px; cursor: pointer; background: #ff4757; color: white; font-weight: bold; transition: 0.3s; }
+        .end-btn:hover { background: #ff6b81; transform: scale(1.05); }
+
+        /* Alarm Overlay */
+        .alarm-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
+        .alarm-box { background: white; color: #333; padding: 40px; border-radius: 20px; text-align: center; max-width: 500px; animation: popIn 0.3s ease; }
+        .alarm-box h2 { color: #ff4757; font-size: 2.5em; margin: 0 0 15px 0; }
+        .alarm-box p { font-size: 1.2em; margin-bottom: 25px; }
+        .continue-btn { padding: 15px 40px; background: #667eea; color: white; border: none; border-radius: 30px; font-size: 1.2em; font-weight: bold; cursor: pointer; }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Todo Section */
+        .todo-container { background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; margin-top: 40px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        input[type="text"] { padding: 10px; width: 70%; border: none; border-radius: 5px; font-size: 1em; }
+        ul { list-style-type: none; padding: 0; text-align: left; }
+        li { background: rgba(255,255,255,0.3); padding: 10px; margin: 5px 0; border-radius: 5px; display: flex; align-items: center; }
+        li input { margin-right: 10px; width: 20px; height: 20px; }
+        .done { text-decoration: line-through; opacity: 0.6; }
+        .confetti-piece { position: fixed; width: 10px; height: 10px; top: -10px; animation: fall 3s linear forwards; z-index: 9999; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div style="position: fixed; left: 0; top: 0; width: 220px; height: 100%; background: rgba(0,0,0,0.8); color: white; padding: 20px; box-sizing: border-box; z-index: 1000;">
+    <h3 style="color: #fff; border-bottom: 1px solid #555; padding-bottom: 10px;">StudyFlow AI</h3>
+    <p style="font-size: 0.9em; opacity: 0.7;">Hello, {{ username }}</p>
+    <ul style="list-style: none; padding: 0; margin-top: 30px;">
+        <li style="margin: 15px 0;"><a href="/dashboard" style="color: white; text-decoration: none; font-size: 1.1em;"> Dashboard</a></li>
+        <li style="margin: 15px 0;"><a href="/notefusion" style="color: white; text-decoration: none; font-size: 1.1em;">🧠 NoteFusion</a></li>
+        <li style="margin: 15px 0;"><a href="/focus" style="color: white; text-decoration: none; font-size: 1.1em;">🎯 Focus Zone</a></li>
+        <li style="margin: 15px 0;"><a href="/timetable" style="color: white; text-decoration: none; font-size: 1.1em;">📅 Timetable Generator</a></li>
+        <li style="margin: 40px 0 0 0;"><a href="/logout" style="color: #ff4757; text-decoration: none; font-size: 1em;">🚪 Logout</a></li>
+    </ul>
+</div>
+
+<div style="margin-left: 240px; padding: 20px;">
+    <h1>🎯 Focus Zone</h1>
+
+    <!-- 1. Mode Selection -->
+    <div id="modeSelection" class="mode-cards">
+        <div class="mode-card" onclick="selectMode('pomodoro')">
+            <div class="mode-icon">⏳</div>
+            <h2>Pomodoro</h2>
+            <p>Classic 25 min study<br>5 min break</p>
+        </div>
+        <div class="mode-card" onclick="selectMode('custom')">
+            <div class="mode-icon">⏱️</div>
+            <h2>Custom Timer</h2>
+            <p>Set your own study<br>and break times</p>
+        </div>
+    </div>
+
+    <!-- 2. Custom Setup Form -->
+    <div id="customSetup" class="setup-form">
+        <h2>⚙️ Setup Your Timer</h2>
+        <label>Study Duration (minutes):</label>
+        <input type="number" id="studyMin" value="45" min="1" max="180">
+        
+        <label>Break Duration (minutes):</label>
+        <input type="number" id="breakMin" value="10" min="1" max="60">
+        
+        <button class="setup-btn" onclick="startCustomTimer()">▶ Start Session</button>
+        <button class="end-btn" style="background: #6c757d; margin-top: 10px; font-size: 1em; padding: 10px;" onclick="resetToMenu()">← Back</button>
+    </div>
+
+    <!-- 3. Active Timer -->
+    <div id="activeTimer" class="active-timer-section">
+        <div class="phase-label" id="phaseLabel">STUDY TIME</div>
+        <div class="timer" id="timerDisplay">25:00</div>
+        <button class="end-btn" onclick="endSession()">🛑 END SESSION</button>
+    </div>
+
+    <!-- 4. Alarm Overlay -->
+    <div id="alarmOverlay" class="alarm-overlay" onclick="stopAlarmAndContinue()">
+        <div class="alarm-box">
+            <h2 id="alarmTitle">⏰ TIME'S UP!</h2>
+            <p id="alarmMessage">Click anywhere to start your break!</p>
+            <button class="continue-btn">Continue ➡️</button>
+        </div>
+    </div>
+
+    <!-- Todo List (Unchanged) -->
+    <div class="todo-container">
+        <h2>📋 Today's Tasks</h2>
+        <input type="text" id="taskInput" placeholder="Add a task..." onkeypress="if(event.key==='Enter') addTask()">
+        <button onclick="addTask()" style="padding: 10px 20px; border:none; border-radius:5px; background:#2ed573; color:white; cursor:pointer;">Add</button>
+        <ul id="taskList"></ul>
+        <p id="statusMsg" style="font-size: 1.2em; font-weight: bold; margin-top: 15px;"></p>
+    </div>
+</div>
+
+<script>
+    // --- TIMER LOGIC ---
+    let studyDuration = 25;
+    let breakDuration = 5;
+    let timeLeft = 0;
+    let timerId = null;
+    let isStudyPhase = true;
+    let audioCtx = null;
+    let alarmInterval = null;
+
+    function selectMode(mode) {
+        if (mode === 'pomodoro') {
+            studyDuration = 25;
+            breakDuration = 5;
+            startSession();
+        } else if (mode === 'custom') {
+            document.getElementById('modeSelection').style.display = 'none';
+            document.getElementById('customSetup').style.display = 'block';
+        }
+    }
+
+    function startCustomTimer() {
+        studyDuration = parseInt(document.getElementById('studyMin').value) || 25;
+        breakDuration = parseInt(document.getElementById('breakMin').value) || 5;
+        document.getElementById('customSetup').style.display = 'none';
+        startSession();
+    }
+
+    function startSession() {
+        isStudyPhase = true;
+        timeLeft = studyDuration * 60;
+        document.getElementById('modeSelection').style.display = 'none';
+        document.getElementById('customSetup').style.display = 'none';
+        document.getElementById('activeTimer').style.display = 'block';
+        updateDisplay();
+        startTimer();
+    }
+
+    function updateDisplay() {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        document.getElementById("timerDisplay").textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        
+        const phaseLabel = document.getElementById('phaseLabel');
+        if (isStudyPhase) {
+            phaseLabel.textContent = "📚 STUDY TIME";
+            phaseLabel.style.color = "#fff";
+        } else {
+            phaseLabel.textContent = "☕ BREAK TIME";
+            phaseLabel.style.color = "#2ed573";
+        }
+    }
+
+    function startTimer() {
+        if (timerId) clearInterval(timerId);
+        timerId = setInterval(() => {
+            if (timeLeft > 0) {
+                timeLeft--;
+                updateDisplay();
+            } else {
+                clearInterval(timerId);
+                timerId = null;
+                triggerAlarm();
+            }
+        }, 1000);
+    }
+
+    function triggerAlarm() {
+        playAlarmSound();
+        const overlay = document.getElementById('alarmOverlay');
+        const title = document.getElementById('alarmTitle');
+        const msg = document.getElementById('alarmMessage');
+        
+        if (isStudyPhase) {
+            title.textContent = " STUDY TIME OVER!";
+            msg.textContent = "Great job! Click anywhere to start your break.";
+        } else {
+            title.textContent = "☕ BREAK OVER!";
+            msg.textContent = "Refreshed? Click anywhere to get back to studying!";
+        }
+        
+        overlay.style.display = 'flex';
+    }
+
+    function stopAlarmAndContinue() {
+        stopAlarmSound();
+        document.getElementById('alarmOverlay').style.display = 'none';
+        
+        // Switch phases
+        if (isStudyPhase) {
+            isStudyPhase = false;
+            timeLeft = breakDuration * 60;
+        } else {
+            isStudyPhase = true;
+            timeLeft = studyDuration * 60;
+        }
+        
+        updateDisplay();
+        startTimer();
+    }
+
+    function endSession() {
+        if (timerId) clearInterval(timerId);
+        timerId = null;
+        stopAlarmSound();
+        document.getElementById('alarmOverlay').style.display = 'none';
+        document.getElementById('activeTimer').style.display = 'none';
+        document.getElementById('modeSelection').style.display = 'flex';
+    }
+
+    function resetToMenu() {
+        document.getElementById('customSetup').style.display = 'none';
+        document.getElementById('modeSelection').style.display = 'flex';
+    }
+
+    // --- AUDIO LOGIC (Web Audio API for reliable offline beeps) ---
+    function playAlarmSound() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let beepCount = 0;
+        alarmInterval = setInterval(() => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.value = 880; // High pitch beep
+            gain.gain.value = 0.1;
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.2); // Beep for 0.2 seconds
+            beepCount++;
+            if (beepCount > 15) clearInterval(alarmInterval); // Auto stop after a while
+        }, 500); // Beep every 0.5 seconds
+    }
+
+    function stopAlarmSound() {
+        if (alarmInterval) {
+            clearInterval(alarmInterval);
+            alarmInterval = null;
+        }
+    }
+
+    // --- TODO LOGIC (Unchanged) ---
+    function addTask() {
+        let input = document.getElementById("taskInput");
+        if (input.value.trim() === "") return;
+        let li = document.createElement("li");
+        li.innerHTML = `<input type="checkbox" onchange="checkTask(this)"> ${input.value}`;
+        document.getElementById("taskList").appendChild(li);
+        input.value = "";
+        updateStatus();
+    }
+    function checkTask(checkbox) {
+        checkbox.parentElement.classList.toggle("done", checkbox.checked);
+        updateStatus();
+    }
+    function updateStatus() {
+        let total = document.querySelectorAll("#taskList li").length;
+        let done = document.querySelectorAll("#taskList li input:checked").length;
+        let remaining = total - done;
+        let msg = document.getElementById("statusMsg");
+        if (total === 0) { msg.textContent = ""; return; }
+        if (remaining === 0) { msg.innerHTML = "🎊 HEYY YOU ARE DONE! CONGRATS!! 🎉"; launchConfetti(); }
+        else if (remaining === 1) { msg.innerHTML = "🔥 C'mon! Only <strong>ONE</strong> task left!"; }
+        else if (remaining <= 3) { msg.innerHTML = `🚀 Almost there! Just <strong>${remaining}</strong> more!`; }
+        else { msg.innerHTML = `✅ Great job! You have <strong>${remaining}</strong> task(s) left.`; }
+    }
+    function launchConfetti() {
+        const colors = ['#ff0', '#f0f', '#0ff', '#0f0', '#f00', '#00f', '#ff6600'];
+        for (let i = 0; i < 150; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece';
+            piece.style.left = Math.random() * 100 + 'vw';
+            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+            piece.style.animationDelay = Math.random() * 2 + 's';
+            piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+            document.body.appendChild(piece);
+            setTimeout(() => piece.remove(), 4000);
+        }
+    }
+</script>
+</body>
+</html>

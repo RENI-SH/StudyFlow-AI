@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Library - StudyFlow AI</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f9; margin: 0; }
+        .container { padding: 20px; }
+        h1 { color: #764ba2; }
+        .file-list { list-style: none; padding: 0; }
+        .file-item { background: white; padding: 20px; margin: 15px 0; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.15); display: flex; justify-content: space-between; align-items: center; }
+        .file-info { flex: 1; }
+        .file-name { font-size: 1.2em; font-weight: bold; color: #667eea; margin-bottom: 5px; }
+        .view-btn { background: #667eea; color: white; padding: 10px 25px; text-decoration: none; border-radius: 8px; display: inline-block; transition: 0.3s; }
+        .view-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+    </style>
+</head>
+<body>
+<div style="position: fixed; left: 0; top: 0; width: 220px; height: 100%; background: rgba(0,0,0,0.8); color: white; padding: 20px; box-sizing: border-box; z-index: 1000;">
+    <h3 style="color: #fff; border-bottom: 1px solid #555; padding-bottom: 10px;">StudyFlow AI</h3>
+    <p style="font-size: 0.9em; opacity: 0.7;">Hello, {{ username }}</p>
+    <ul style="list-style: none; padding: 0; margin-top: 30px;">
+        <li style="margin: 15px 0;"><a href="/dashboard" style="color: white; text-decoration: none; font-size: 1.1em;">🏠 Dashboard</a></li>
+        <li style="margin: 15px 0;"><a href="/notefusion" style="color: white; text-decoration: none; font-size: 1.1em;">🧠 NoteFusion</a></li>
+        <li style="margin: 15px 0;"><a href="/focus" style="color: white; text-decoration: none; font-size: 1.1em;">🎯 Focus Zone</a></li>
+        <li style="margin: 15px 0;"><a href="/timetable" style="color: white; text-decoration: none; font-size: 1.1em;"> Timetable Generator</a></li>
+        <li style="margin: 15px 0;"><a href="/library" style="color: white; text-decoration: none; font-size: 1.1em;">📚 Library</a></li>
+        <li style="margin: 40px 0 0 0;"><a href="/logout" style="color: #ff4757; text-decoration: none; font-size: 1em;"> Logout</a></li>
+    </ul>
+</div>
+<div style="margin-left: 240px; padding: 20px;">
+    <div class="container">
+        <h1>📚 Your Study Library</h1>
+        {% if files %}
+            <ul class="file-list">
+                {% for file in files %}
+                <li class="file-item">
+                    <div class="file-info">
+                        <div class="file-name">{{ file.replace('_', ' ').replace('.pdf', '') }}</div>
+                    </div>
+                    <a href="/view-pdf/{{ file }}" target="_blank" class="view-btn">👁️ View PDF</a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p style="font-size: 1.2em; color: #666; text-align: center; padding: 40px;">No summaries saved yet. Go to NoteFusion to create one!</p>
+        {% endif %}
+    </div>
+</div>
+</body>
+</html>

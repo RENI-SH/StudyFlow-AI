@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StudyFlow AI - Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 50px; min-height: 100vh; margin: 0; }
+        h1 { font-size: 3.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        p.subtitle { font-size: 1.3em; margin-bottom: 50px; opacity: 0.9; }
+        
+        .cards-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 280px;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.4);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .card-icon { font-size: 4em; margin-bottom: 20px; }
+        .card h2 { font-size: 1.8em; margin-bottom: 15px; }
+        .card p { font-size: 1.1em; opacity: 0.9; line-height: 1.5; }
+        
+        .badge { display: inline-block; background: #ff4757; padding: 5px 10px; border-radius: 15px; font-size: 0.8em; margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🚀 StudyFlow AI</h1>
+    <p class="subtitle">Your Ultimate AI-Powered Study Companion</p>
+
+    <div class="cards-container">
+        <!-- Focus Zone Card -->
+        <a href="/focus" class="card">
+            <div class="card-icon">🎯</div>
+            <h2>Focus Zone</h2>
+            <p>Stay on track with Pomodoro timers, dynamic to-do lists, and focus music.</p>
+            <div class="badge">ACTIVE</div>
+        </a>
+
+        <!-- NoteFusion Card -->
+        <a href="/notefusion" class="card">
+            <div class="card-icon">🧠</div>
+            <h2>NoteFusion AI</h2>
+            <p>Upload your messy notes, PDFs, and images. Let AI summarize them into beautiful study guides.</p>
+            <div class="badge">COMING NEXT</div>
+        </a>
+
+        <!-- Timetable Card -->
+        <a href="/timetable" class="card">
+            <div class="card-icon">📅</div>
+            <h2>Smart Timetable</h2>
+            <p>Generate a personalized, priority-based study schedule in seconds using AI.</p>
+            <div class="badge">COMING NEXT</div>
+        </a>
+    </div>
+</body>
+</html>
