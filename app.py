@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import PyPDF2
 import re
+import os
 
+# CRITICAL: template_folder='.' tells Flask to look in the main folder for your HTML files
 app = Flask(__name__, template_folder='.')
 app.secret_key = 'studyflow_secret_key_123'
 
@@ -76,7 +78,6 @@ def smart_local_formatter(text, subject, topic):
     html = f"<h2>{subject}: {topic}</h2>"
     html += "<h3>Key Definitions</h3>"
     
-    # Extract definitions
     def_found = False
     for sentence in sentences:
         sentence = sentence.strip()
@@ -88,7 +89,6 @@ def smart_local_formatter(text, subject, topic):
     if not def_found:
         html += f"<p><i>\"Key concepts from {subject} - {topic}\"</i></p>"
     
-    # Extract Questions and Answers
     html += "<h3>Questions & Answers</h3>"
     qa_found = False
     for sentence in sentences:
@@ -100,10 +100,8 @@ def smart_local_formatter(text, subject, topic):
     if not qa_found:
         html += "<p><i>Refer to your notes for practice questions.</i></p>"
     
-    # Topic-wise theory with minimal spacing
     html += "<h3>Detailed Theory</h3>"
     
-    # Group sentences by topics (capitalize first word as topic marker)
     current_topic = None
     topic_points = []
     
@@ -111,29 +109,22 @@ def smart_local_formatter(text, subject, topic):
         sentence = sentence.strip()
         if len(sentence) < 15: continue
         
-        # Skip if already used as definition or question
         if re.search(r'\b(define|definition|means|refers to)\b', sentence, re.IGNORECASE):
             continue
         if '?' in sentence:
             continue
             
-        # Check if this looks like a topic header (starts with capital, short)
         if sentence[0].isupper() and len(sentence) < 60 and not sentence[0:5].lower() in ['the', 'this', 'that']:
-            # New topic
             if current_topic and topic_points:
-                # Write previous topic
                 html += f"<p><b>{current_topic}</b></p>"
                 for point in topic_points:
                     html += f"<p>• {point}</p>"
-                html += ""  # Minimal spacing
             current_topic = sentence.rstrip('.')
             topic_points = []
         else:
-            # Add to current topic
             if len(sentence) > 20:
                 topic_points.append(sentence)
     
-    # Write last topic
     if current_topic and topic_points:
         html += f"<p><b>{current_topic}</b></p>"
         for point in topic_points:
@@ -156,7 +147,6 @@ def summarize():
             if extracted.strip():
                 all_text += f"\n--- From {file.filename} ---\n{extracted}\n"
 
-        # FALLBACK if no text extracted
         if not all_text.strip():
             all_text = f"""
 {subject} - {topic} is an important area of study.
@@ -196,7 +186,8 @@ def results():
 def get_summary_data():
     html = summary_data.get('html_content', '<p>No content generated</p>')
     return jsonify({'html': html})
+
+# CRITICAL FOR RENDER DEPLOYMENT
 if __name__ == '__main__':
-    import os
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=False)
