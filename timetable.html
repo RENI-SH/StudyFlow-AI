@@ -3,7 +3,7 @@
 <head>
     <title>Timetable Generator - StudyFlow AI</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #7F7FD5 0%, #86A8E7 50%, #91EAE4 100%); color: white; min-height: 100vh; margin: 0; padding: 20px; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; margin: 0; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; }
         h1 { text-align: center; font-size: 2.5em; margin-bottom: 10px; }
         .subtitle { text-align: center; font-size: 1.2em; opacity: 0.9; margin-bottom: 30px; }
@@ -15,16 +15,16 @@
         .subject-row input { flex: 1; }
         .subject-row select { width: 150px; }
         .subject-row button { background: #ff4757; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; }
-        .add-btn { background: #7F7FD5; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 1em; margin-top: 15px; }
-        .generate-btn { width: 100%; padding: 15px; background: #7F7FD5; color: white; border: none; border-radius: 10px; font-size: 1.2em; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .generate-btn:hover { background: #86A8E7; }
+        .add-btn { background: #667eea; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 1em; margin-top: 15px; }
+        .generate-btn { width: 100%; padding: 15px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 1.2em; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .generate-btn:hover { background: #764ba2; }
         .timetable-result { margin-top: 30px; background: white; color: #333; padding: 25px; border-radius: 15px; display: none; max-height: 70vh; overflow-y: auto; }
-        .timetable-result h3 { color: #7F7FD5; margin-top: 0; }
-        .day-schedule { background: #f9f9f9; padding: 15px; margin: 15px 0; border-radius: 10px; border-left: 4px solid #7F7FD5; }
-        .day-schedule h4 { color: #86A8E7; margin: 0 0 10px 0; }
+        .timetable-result h3 { color: #667eea; margin-top: 0; }
+        .day-schedule { background: #f9f9f9; padding: 15px; margin: 15px 0; border-radius: 10px; border-left: 4px solid #667eea; }
+        .day-schedule h4 { color: #764ba2; margin: 0 0 10px 0; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 0.95em; }
-        th { background: #7F7FD5; color: white; }
+        th { background: #667eea; color: white; }
         tr:nth-child(even) { background: #fff; }
         tr:nth-child(odd) { background: #f0f4ff; }
     </style>
@@ -38,7 +38,7 @@
         <li style="margin: 15px 0;"><a href="/notefusion" style="color: white; text-decoration: none; font-size: 1.1em;">🧠 NoteFusion</a></li>
         <li style="margin: 15px 0;"><a href="/focus" style="color: white; text-decoration: none; font-size: 1.1em;">🎯 Focus Zone</a></li>
         <li style="margin: 15px 0;"><a href="/timetable" style="color: white; text-decoration: none; font-size: 1.1em;">📅 Timetable Generator</a></li>
-        <li style="margin: 40px 0 0 0;"><a href="/logout" style="color: #ff4757; text-decoration: none; font-size: 1em;">🚪 Logout</a></li>
+        <li style="margin: 40px 0 0 0;"><a href="/logout" style="color: #ff4757; text-decoration: none; font-size: 1em;"> Logout</a></li>
     </ul>
 </div>
 <div style="margin-left: 240px; padding: 20px;">
