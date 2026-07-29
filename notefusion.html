@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <title>NoteFusion AI - StudyFlow</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 40px 20px; min-height: 100vh; margin:0; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #7F7FD5 0%, #86A8E7 50%, #91EAE4 100%); color: white; text-align: center; padding: 40px 20px; min-height: 100vh; margin:0; }
         h1 { font-size: 3em; margin-bottom: 10px; }
         .container { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; max-width: 800px; margin: 0 auto; text-align: left; }
         label { display: block; margin-top: 15px; font-weight: bold; font-size: 1.1em; }
         input[type="text"] { width: 100%; padding: 12px; margin-top: 5px; border: none; border-radius: 8px; font-size: 1em; background: rgba(255,255,255,0.9); color: #333; box-sizing: border-box; }
         .file-upload-box { border: 3px dashed rgba(255,255,255,0.6); border-radius: 15px; padding: 40px 20px; text-align: center; margin-top: 10px; background: rgba(255,255,255,0.1); }
         .file-upload-box input[type="file"] { display: none; }
-        .upload-btn { cursor: pointer; background: #667eea; color: white; padding: 15px 30px; border-radius: 8px; display: inline-block; font-size: 1.1em; font-weight: bold; transition: 0.3s; }
-        .upload-btn:hover { background: #764ba2; transform: scale(1.05); }
+        .upload-btn { cursor: pointer; background: #7F7FD5; color: white; padding: 15px 30px; border-radius: 8px; display: inline-block; font-size: 1.1em; font-weight: bold; transition: 0.3s; }
+        .upload-btn:hover { background: #86A8E7; transform: scale(1.05); }
         .file-list { margin-top: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; min-height: 50px; }
-        .file-item { background: rgba(255,255,255,0.2); padding: 10px 15px; margin: 8px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #764ba2; }
+        .file-item { background: rgba(255,255,255,0.2); padding: 10px 15px; margin: 8px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #91EAE4; }
         .file-item button { background: #ff4757; color: white; border: none; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        button[type="submit"] { margin-top: 25px; width: 100%; padding: 15px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 1.2em; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button[type="submit"]:hover { background: #764ba2; }
+        button[type="submit"] { margin-top: 25px; width: 100%; padding: 15px; background: #7F7FD5; color: white; border: none; border-radius: 10px; font-size: 1.2em; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button[type="submit"]:hover { background: #86A8E7; }
         button[type="submit"]:disabled { background: #888; cursor: not-allowed; }
         .loader { display: none; text-align: center; margin-top: 20px; font-size: 1.2em; }
         .spinner { border: 4px solid rgba(255,255,255,0.3); border-radius: 50%; border-top: 4px solid #fff; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 10px auto; }
@@ -37,7 +37,7 @@
     </ul>
 </div>
 <div style="margin-left: 240px; padding: 20px;">
-    <h1> NoteFusion AI</h1>
+    <h1>🧠 NoteFusion AI</h1>
     <p style="font-size: 1.2em; margin-bottom: 30px;">Upload ALL your notes, PDFs, PPTs - AI will merge them intelligently!</p>
     <div class="container">
         <form id="uploadForm" enctype="multipart/form-data">
@@ -48,7 +48,7 @@
             <label>Select Your Files:</label>
             <div class="file-upload-box">
                 <input type="file" id="fileInput" multiple accept=".pdf,.txt,.ppt,.pptx" onchange="updateFileList()">
-                <label for="fileInput" class="upload-btn"> Click Here to Select Files</label>
+                <label for="fileInput" class="upload-btn">📁 Click Here to Select Files</label>
                 <p style="margin-top: 15px; opacity: 0.9; font-size: 0.9em;">💡 TIP: Hold down the <b>CTRL</b> key on your keyboard while clicking files to select multiple at once!</p>
             </div>
             <div class="file-list" id="fileList">
